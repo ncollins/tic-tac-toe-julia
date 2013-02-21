@@ -7,6 +7,5 @@ Tic Tac Toe implementation, this is my first attempt.
 I haven't added AI yet, only human players who take turns to input commands of the
 form "A1." where A is the column and 1 is the row. "END." aborts the game.
 
-Run this by entering the Julia REPL and using the following commands:
-<code>&gt require("tic_tac_toe.jl")</code>
-<code>&gt main()</code>
+Run this by entering the Julia REPL and entering <code>require("tic_tac_toe.jl")</code>
+followed by <code>main()</code>.
