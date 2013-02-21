@@ -4,7 +4,9 @@
 
 function make_board(N)
     # creates an empty board of size N x N
-    return zeros(Int8, N, N)
+    rows = [x for x=1:N]
+    columns = [x for x='A':'Z'][1:N]
+    return zeros(Int8, N, N), rows, columns
 end
 
 
@@ -78,14 +80,15 @@ end
 
 # PLAY GAME
 
-function parse_input(input, rows::String, columns::String)
+function parse_input(input, rows, columns)
     if begins_with(input, "END.")
         return (0,0)
     elseif length(input) < 3 
         error()
     elseif input[3] == '.' 
-        col = search(columns, input[1])
-        row = search(rows, input[2])
+        println("found .")
+        col = findin(columns, input[1])[1]
+        row = findin(rows, int(string(input[2])))[1]
         if (col > 0) && (row > 0)
             return (row, col)
         else
@@ -98,7 +101,7 @@ end
 
 
 function main()
-    board = make_board(3)
+    board, rows, columns = make_board(3)
     player = 1
     println(board_to_string(board))
     while game_state(board) == 0
@@ -108,7 +111,7 @@ function main()
             input = input[1:length(input)-1]
         end
         try
-            command = parse_input(input, "123", "ABC") # WARNING: hard coded, should use join()?
+            command = parse_input(input, rows, columns)
             if command == (0,0)
                 break
             else
