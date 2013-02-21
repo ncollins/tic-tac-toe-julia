@@ -8,5 +8,5 @@ I haven't added AI yet, only human players who take turns to input commands of t
 form "A1." where A is the column and 1 is the row. "END." aborts the game.
 
 Run this by entering the Julia REPL and using the following commands:
-> require("tic_tac_toe.jl")
-> main()
+<code>&gt require("tic_tac_toe.jl")</code>
+<code>&gt main()</code>
