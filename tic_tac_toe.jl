@@ -86,7 +86,6 @@ function parse_input(input, rows, columns)
     elseif length(input) < 3 
         error()
     elseif input[3] == '.' 
-        println("found .")
         col = findin(columns, input[1])[1]
         row = findin(rows, int(string(input[2])))[1]
         if (col > 0) && (row > 0)
