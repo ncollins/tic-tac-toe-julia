@@ -116,11 +116,3 @@ function main()
         println("GAME ABORTED")
     end
 end
-
-
-# OTHER / TESTING
-
-board = make_board(4)
-
-println(move(board, 1, 1, 1))
-println("hey")
