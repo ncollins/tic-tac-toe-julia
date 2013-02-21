@@ -17,20 +17,30 @@ function move(board, player, i, j)
 end
 
 
-function check_victory(board)
-    # checks if either of the players have won
+function game_state(board)
+    # returns 0 if the game is ongoing
+    # 1 if player X has won
+    # -1 if player O has won
+    # 2 if there are no more moves
     N, _ = size(board)
     # rows and columns
     for i=1:N
-        if (abs(sum(board[i,:])) == N) || abs(sum(board[:,i])) == N
-            return true
+        if sum(board[i,:]) == N || sum(board[:,i]) == N
+            return 1
+        elseif sum(board[i,:]) == -N || sum(board[:,i]) == -N
+            return -1
         end
     end
     # diagonals
-    if abs(sum(diag(board,0))) == N || abs(sum(diag(rotl90(board),0))) == N
-        return true
+    if sum(diag(board,0)) == N || sum(diag(rotl90(board),0)) == N
+        return 1
+    elseif sum(diag(board,0)) == -N || sum(diag(rotl90(board),0)) == -N
+        return -1
+    elseif ~any(x -> x==0, board)
+        return 2
     end
-    false
+    # game continues
+    return 0
 end
 
 # DRAWING FUNCTIONS
@@ -88,17 +98,17 @@ end
 
 
 function main()
-    board = make_board(4)
+    board = make_board(3)
     player = 1
     println(board_to_string(board))
-    while ~check_victory(board)
+    while game_state(board) == 0
         println("Enter your move:")
         input = readline(STDIN)
         if input[length(input)] == '\n'
             input = input[1:length(input)-1]
         end
         try
-            command = parse_input(input, "1234", "ABCD") # WARNING: hard coded, should use join()?
+            command = parse_input(input, "123", "ABC") # WARNING: hard coded, should use join()?
             if command == (0,0)
                 break
             else
@@ -110,8 +120,12 @@ function main()
             println("Invalid input/move")
         end
     end
-    if check_victory(board)
-        println(string("PLAYER ", player_to_mark(-1*player), " WINS!"))
+    if game_state(board) == 1
+        println(string("PLAYER A (Xs) WINS!"))
+    elseif game_state(board) == -1
+        println(string("PLAYER B (Os) WINS!"))
+    elseif game_state(board) == 2
+        println("GAME OVER: NO MOVES AVAILABLE")
     else
         println("GAME ABORTED")
     end
