@@ -4,7 +4,7 @@
 
 function make_board(N)
     # creates an empty board of size N x N
-    rows = [x for x=1:N]
+    rows = [char(x+48) for x=1:N]
     columns = [x for x='A':'Z'][1:N]
     return zeros(Int8, N, N), rows, columns
 end
@@ -47,20 +47,20 @@ end
 
 # DRAWING FUNCTIONS
 
-function board_to_string(board)
+function board_to_string(board, rows, columns)
     function row_to_string(row, fun)
-        width = size(row)[2]
         out = ""
-        for i=1:width
-            out = string(out, "\t", fun(row[i]))
+        for i=row
+            out = string(out, "\t", fun(i))
         end
         out
     end
 
     width, height = size(board)
-    out = string("\t", row_to_string([string(x) for x='A':'Z']'[:,1:width], x -> x), "\n")
-    for j=1:height
-        out = string(out, string(j), "\t", row_to_string(board[j,:], player_to_mark), "\n")
+    out = string("\t", row_to_string([x for x=columns], string), "\n")
+    for j=1:height # use this rather than 'rows' as we need an integer index
+        row_seq = [x for x=board[j,:]]
+        out = string(out, string(j), "\t", row_to_string(row_seq, player_to_mark), "\n")
     end
     out
 end
@@ -83,7 +83,7 @@ end
 function parse_input(input, rows, columns)
     if input[3] == '\n' 
         col = findin(columns, input[1])[1]
-        row = findin(rows, int(string(input[2])))[1]
+        row = findin(rows, input[2])[1]
         if (col > 0) && (row > 0)
             return (row, col)
         else
@@ -100,7 +100,7 @@ end
 function main()
     board, rows, columns = make_board(3)
     player = 1
-    println(board_to_string(board))
+    println(board_to_string(board, rows, columns))
     while game_state(board) == 0
         println("Enter your move:")
         input = readline(STDIN)
@@ -111,7 +111,7 @@ function main()
             else
                 move(board, player, command[1], command[2])
             end
-            println(board_to_string(board))
+            println(board_to_string(board, rows, columns))
             player *= -1
         catch
             println("Invalid input/move")
