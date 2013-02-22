@@ -81,11 +81,11 @@ end
 # PLAY GAME
 
 function parse_input(input, rows, columns)
-    if begins_with(input, "END.")
+    if begins_with(input, "END")
         return (0,0)
     elseif length(input) < 3 
         error()
-    elseif input[3] == '.' 
+    elseif input[3] == '\n' 
         col = findin(columns, input[1])[1]
         row = findin(rows, int(string(input[2])))[1]
         if (col > 0) && (row > 0)
@@ -106,9 +106,9 @@ function main()
     while game_state(board) == 0
         println("Enter your move:")
         input = readline(STDIN)
-        if input[length(input)] == '\n'
-            input = input[1:length(input)-1]
-        end
+        #if input[length(input)] == '\n'
+        #    input = input[1:length(input)-1]
+        #end
         try
             command = parse_input(input, rows, columns)
             if command == (0,0)
