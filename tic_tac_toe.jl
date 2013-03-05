@@ -49,7 +49,7 @@ end
 
 function board_to_string(board, rows, columns)
     function row_to_string(row, fun)
-        out = ""
+        local out = ""
         for i=row
             out = string(out, "\t", fun(i))
         end
@@ -60,7 +60,8 @@ function board_to_string(board, rows, columns)
     out = string("\t", row_to_string([x for x=columns], string), "\n")
     for j=1:height # use this rather than 'rows' as we need an integer index
         row_seq = [x for x=board[j,:]]
-        out = string(out, string(j), "\t", row_to_string(row_seq, player_to_mark), "\n")
+        row_string = row_to_string(row_seq, player_to_mark)
+        out = string(out, string(j), "\t", row_string, "\n")
     end
     out
 end
