@@ -1,13 +1,17 @@
 # Minmax.jl - minmax AI algorithm
 
 cache = Dict()
-cache[-1] = Dict()
-cache[1] = Dict()
+cache[(-1,:max)] = Dict()
+cache[(-1,:min)] = Dict()
+cache[(1,:max)] = Dict()
+cache[(1,:min)] = Dict()
 
 function wipe_cache()
     cache = Dict()
-    cache[-1] = Dict()
-    cache[1] = Dict()
+    cache[(-1,:max)] = Dict()
+    cache[(-1,:min)] = Dict()
+    cache[(1,:max)] = Dict()
+    cache[(1,:min)] = Dict()
 end
     
 
@@ -29,8 +33,8 @@ function minmax_with_cache(board, player, status)
     func = (status == :max) ? indmax : indmin
     # this needs to return the utility (for recursion)
     # and also the best move
-    if has(cache, player) && has(cache[player], board)
-        cache[player][board]
+    if has(cache, (player, status)) && has(cache[(player, status)], board)
+        cache[(player, status)][board]
     else
         child_player = -1 * player
         child_status = (status == :max) ? (:min) : (:max)
@@ -43,13 +47,12 @@ function minmax_with_cache(board, player, status)
                 children = vcat(children, [(util, next_move)])
             end
             # this adds the best (util, best_move) pair to the cache
-            util, chosen_move = children[child_func([c[1] for c=children])]
-            if status == :max
-                cache[player][board] = util, chosen_move
-            end
+            #util, chosen_move = children[child_func([c[1] for c=children])]
+            util, chosen_move = children[func([c[1] for c=children])]
+            cache[(player, status)][board] = util, chosen_move
             util, chosen_move
         else
-            cache[player][board] = game_state(board), nothing
+            cache[(player, status)][board] = game_state(board), nothing
         end
     end
 end
