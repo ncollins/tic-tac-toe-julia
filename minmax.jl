@@ -34,10 +34,10 @@ function minmax_with_cache(board, player, func)
         child_func = (func == indmax) ? indmin : indmax
         if game_state(board) == :continue_game
             children = []
-            for m=possible_moves(board)
-                child_board = move(board, player, m)
+            for next_move=possible_moves(board)
+                child_board = move(board, player, next_move)
                 util, best_move = minmax_with_cache(child_board, child_player, child_func)
-                children = vcat(children, [(util, m)])
+                children = vcat(children, [(util, next_move)])
             end
             # this adds the best (util, best_move) pair to the cache
             util, best_move = children[child_func([c[1] for c=children])]
