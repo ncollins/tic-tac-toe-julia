@@ -106,17 +106,37 @@ function parse_input(input, rows, columns)
 end
 
 
+function get_player_status(player)
+    player_string = (player == 1) ? "X" : "O"
+    println("Player $player_string: (H)uman or (C)omputer?")
+    input = readline(STDIN)
+    if input == "H\n"
+        :human
+    elseif input == "C\n"
+        :computer
+    else
+        println("Chose 'H' for Human or 'C' for Computer...")
+        get_player_status(player)
+    end
+end
+
+
 function main()
+    # setup game and first player
     board, rows, columns = make_board(3)
     player = 1
-    #println(board_to_string(board, rows, columns))
-    # TODO: need find out whether the game has 0, 1 or 2 human players...
-    players = [:human, :ai]
+    # get player status Human or Computer
+    players = [1, -1]
+    player_type = Dict()
+    for p=players
+        player_type[p] = get_player_status(p)
+    end
+    # main game loop
     while game_state(board) == :continue_game
         #println("Enter your move:")
         #input = readline(STDIN)
         println(board_to_string(board, rows, columns))
-        if player == 1
+        if player_type[player] == :human
             println("Enter your move:")
             input = readline(STDIN)
             try
@@ -133,7 +153,6 @@ function main()
             end
         else
             ai_util, ai_move = minmax_with_cache(board, player)
-            @show ai_util
             board = move(board, player, ai_move)
             player *= -1
         end
