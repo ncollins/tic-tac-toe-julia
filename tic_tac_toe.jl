@@ -13,10 +13,11 @@ function make_board(N)
 end
 
 
-function move(board, player, i, j)
+function move(board, player, position)
     #@show board
     #@show j
     b = copy(board)
+    i, j = position
     if b[i,j] != 0
         error("position already taken")
     else
@@ -123,7 +124,7 @@ function main()
                 if command == (0,0)
                     break
                 else
-                    board = move(board, player, command[1], command[2])
+                    board = move(board, player, command)
                 end
                 #println(board_to_string(board, rows, columns))
                 player *= -1
@@ -133,7 +134,7 @@ function main()
         else
             ai_util, ai_move = minmax_with_cache(board, player)
             @show ai_util
-            board = move(board, player, ai_move[1], ai_move[2])
+            board = move(board, player, ai_move)
             player *= -1
         end
     end
