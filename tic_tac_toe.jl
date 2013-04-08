@@ -131,7 +131,7 @@ function main()
                 println("Invalid input/move")
             end
         else
-            ai_util, ai_move = minmax(board, player)
+            ai_util, ai_move = minmax_with_cache(board, player)
             @show ai_util
             board = move(board, player, ai_move[1], ai_move[2])
             player *= -1
