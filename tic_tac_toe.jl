@@ -6,24 +6,29 @@ function make_board(N)
     # creates an empty board of size N x N
     rows = [char(x+48) for x=1:N]
     columns = [x for x='A':'Z'][1:N]
-    return zeros(Int8, N, N), rows, columns
+    #return zeros(Int8, N, N), rows, columns
+    return zeros(Int, N, N), rows, columns
 end
 
 
 function move(board, player, i, j)
-    if board[i,j] != 0
+    #@show board
+    #@show j
+    b = copy(board)
+    if b[i,j] != 0
         error("position already taken")
     else
-        board[i,j] = player
+        b[i,j] = player
     end
+    b
 end
 
 
 function game_state(board)
-    # returns 0 if the game is ongoing
+    # returns :continue_game if the game is ongoing
     # 1 if player X has won
     # -1 if player O has won
-    # 2 if there are no more moves
+    # 0 if there are no more moves
     N, _ = size(board)
     # rows and columns
     for i=1:N
@@ -39,10 +44,10 @@ function game_state(board)
     elseif sum(diag(board,0)) == -N || sum(diag(rotl90(board),0)) == -N
         return -1
     elseif ~any(x -> x==0, board)
-        return 2
+        return 0
     end
     # game continues
-    return 0
+    return :continue_game
 end
 
 # DRAWING FUNCTIONS
@@ -98,29 +103,97 @@ function parse_input(input, rows, columns)
 end
 
 
+cache = Dict()
+cache[-1] = Dict()
+cache[1] = Dict()
+
+function wipe_cache()
+    cache = Dict()
+    cache[-1] = Dict()
+    cache[1] = Dict()
+end
+    
+
+function possible_moves(board)
+    out = []
+    for i=1:3
+        for j=1:3
+            if board[i,j] == 0
+                #@show j
+                out = vcat(out,[(i,j)])
+            end
+        end
+    end
+    out
+end
+
+function minmax(board, player, func)
+    # this needs to return the utility (for recursion)
+    # and also the best move
+    if has(cache, player) && has(cache[player], board)
+        cache[player][board]
+    else
+        child_player = -1 * player
+        child_func = (func == indmax) ? indmin : indmax
+        if game_state(board) == :continue_game
+            children = []
+            for m=possible_moves(board)
+                i, j = m
+                child_board = move(board, player, i, j)
+                util, best_move = minmax(child_board, child_player, child_func)
+                children = vcat(children, [(util, m)])
+            end
+            # this adds the best (util, best_move) pair to the cache
+            util, best_move = children[child_func([c[1] for c=children])]
+            if func == indmax
+                cache[player][board] = util, best_move
+            end
+            util, best_move
+        else
+            cache[player][board] = game_state(board), nothing
+        end
+    end
+end
+
+minmax(board, player) = minmax(board, player, indmax)
+
 function main()
     board, rows, columns = make_board(3)
     player = 1
-    println(board_to_string(board, rows, columns))
-    while game_state(board) == 0
-        println("Enter your move:")
-        input = readline(STDIN)
-        try
-            command = parse_input(input, rows, columns)
-            if command == (0,0)
-                break
-            else
-                move(board, player, command[1], command[2])
+    #println(board_to_string(board, rows, columns))
+    # TODO: need find out whether the game has 0, 1 or 2 human players...
+    players = [:human, :ai]
+    while game_state(board) == :continue_game
+        #println("Enter your move:")
+        #input = readline(STDIN)
+        println(board_to_string(board, rows, columns))
+        if player == 1
+            println("Enter your move:")
+            input = readline(STDIN)
+            try
+                command = parse_input(input, rows, columns)
+                if command == (0,0)
+                    break
+                else
+                    board = move(board, player, command[1], command[2])
+                end
+                #println(board_to_string(board, rows, columns))
+                player *= -1
+            catch
+                println("Invalid input/move")
             end
-            println(board_to_string(board, rows, columns))
+        else
+            ai_util, ai_move = minmax(board, player)
+            @show ai_util
+            board = move(board, player, ai_move[1], ai_move[2])
             player *= -1
-        catch
-            println("Invalid input/move")
         end
     end
     if game_state(board) == 1
+        println(board_to_string(board, rows, columns))
         println(string("PLAYER A (Xs) WINS!"))
     elseif game_state(board) == -1
+        println(board_to_string(board, rows, columns))
         println(string("PLAYER B (Os) WINS!"))
     elseif game_state(board) == 2
         println("GAME OVER: NO MOVES AVAILABLE")
