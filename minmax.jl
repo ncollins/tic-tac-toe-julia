@@ -29,7 +29,7 @@ function possible_moves(board)
 end
 
 
-function minmax_with_cache(board, player, status)
+function minmax(board, player, status)
     func = (status == :max) ? indmax : indmin
     # this needs to return the utility (for recursion)
     # and also the best move
@@ -43,7 +43,7 @@ function minmax_with_cache(board, player, status)
             children = []
             for next_move=possible_moves(board)
                 child_board = move(board, player, next_move)
-                util, _ = minmax_with_cache(child_board, child_player, child_status)
+                util, _ = minmax(child_board, child_player, child_status)
                 children = vcat(children, [(util, next_move)])
             end
             # this adds the best (util, best_move) pair to the cache
@@ -57,4 +57,4 @@ function minmax_with_cache(board, player, status)
     end
 end
 
-minmax_with_cache(board, player) = minmax_with_cache(board, player, :max)
+minmax(board, player) = minmax(board, player, :max)
