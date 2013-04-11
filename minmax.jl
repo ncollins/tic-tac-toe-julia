@@ -8,9 +8,10 @@ end
     
 
 function possible_moves(board)
+    N, _ = size(board)
     out = []
-    for i=1:3
-        for j=1:3
+    for i=1:N
+        for j=1:N
             if board[i,j] == 0
                 out = vcat(out,[(i,j)])
             end
