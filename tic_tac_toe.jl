@@ -164,6 +164,7 @@ function main()
         println(board_to_string(board, rows, columns))
         println(string("PLAYER B (Os) WINS!"))
     elseif game_state(board) == 0
+        println(board_to_string(board, rows, columns))
         println("GAME OVER: NO MOVES AVAILABLE")
     else
         println("GAME ABORTED")
