@@ -8,14 +8,11 @@ function make_board(N)
     # creates an empty board of size N x N
     rows = [char(x+48) for x=1:N]
     columns = [x for x='A':'Z'][1:N]
-    #return zeros(Int8, N, N), rows, columns
     return zeros(Int, N, N), rows, columns
 end
 
 
 function move(board, player, position)
-    #@show board
-    #@show j
     b = copy(board)
     i, j = position
     if b[i,j] != 0
@@ -133,8 +130,6 @@ function main()
     end
     # main game loop
     while game_state(board) == :continue_game
-        #println("Enter your move:")
-        #input = readline(STDIN)
         println(board_to_string(board, rows, columns))
         if player_type[player] == :human
             println("Enter your move:")
@@ -146,7 +141,6 @@ function main()
                 else
                     board = move(board, player, command)
                 end
-                #println(board_to_string(board, rows, columns))
                 player *= -1
             catch
                 println("Invalid input/move")
