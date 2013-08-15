@@ -25,7 +25,7 @@ function minmax(board, player)
     func = (player == 1) ? indmax : indmin
     # this needs to return the utility (for recursion)
     # and also the best move
-    if has(cache, string(board))
+    if haskey(cache, string(board))
         cache[string(board)]
     else
         child_player = -1 * player
