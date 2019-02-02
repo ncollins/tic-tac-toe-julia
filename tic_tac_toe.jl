@@ -40,9 +40,9 @@ function game_state(board)
         end
     end
     # diagonals
-    if sum(diagind(board,0)) == N || sum(diagind(rotl90(board),0)) == N
+    if sum(diag(board,0)) == N || sum(diag(rotl90(board),0)) == N
         return 1
-    elseif sum(diagind(board,0)) == -N || sum(diagind(rotl90(board),0)) == -N
+    elseif sum(diag(board,0)) == -N || sum(diag(rotl90(board),0)) == -N
         return -1
     elseif ~any(x -> x==0, board)
         return 0
