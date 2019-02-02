@@ -20,9 +20,17 @@ function possible_moves(board)
     out
 end
 
+function findmax_index(a)
+    findmax(a)[2]
+end
+
+function findmin_index(a)
+    findmin(a)[2]
+end
+
 
 function minmax(board, player)
-    func = (player == 1) ? indmax : indmin
+    func = (player == 1) ? findmax_index : findmin_index
     # this needs to return the utility (for recursion)
     # and also the best move
     if haskey(cache, string(board))

@@ -1,12 +1,13 @@
 # Tic Tac Toe in Julia 
 
-require("minmax.jl")
+using LinearAlgebra
+include("minmax.jl")
 
 # GAME FUNCTIONS
 
 function make_board(N)
     # creates an empty board of size N x N
-    rows = [char(x+48) for x=1:N]
+    rows = [Char(x+48) for x=1:N]
     columns = [x for x='A':'Z'][1:N]
     return zeros(Int, N, N), rows, columns
 end
@@ -39,9 +40,9 @@ function game_state(board)
         end
     end
     # diagonals
-    if sum(diag(board,0)) == N || sum(diag(rotl90(board),0)) == N
+    if sum(diagind(board,0)) == N || sum(diagind(rotl90(board),0)) == N
         return 1
-    elseif sum(diag(board,0)) == -N || sum(diag(rotl90(board),0)) == -N
+    elseif sum(diagind(board,0)) == -N || sum(diagind(rotl90(board),0)) == -N
         return -1
     elseif ~any(x -> x==0, board)
         return 0
@@ -87,15 +88,15 @@ end
 # PLAY GAME
 
 function parse_input(input, rows, columns)
-    if input[3] == '\n' 
-        col = findin(columns, input[1])[1]
-        row = findin(rows, input[2])[1]
+    if length(input) == 2
+		col = findfirst(x -> x == input[1], columns)
+        row = findfirst(x -> x == input[2], rows)
         if (col > 0) && (row > 0)
             return (row, col)
         else
             error()
         end
-    elseif input == "END\n"
+    elseif input == "END"
         return (0,0)
     else
         error()
@@ -106,10 +107,10 @@ end
 function get_player_status(player)
     player_string = (player == 1) ? "X" : "O"
     println("Player $player_string: (H)uman or (C)omputer?")
-    input = readline(STDIN)
-    if input == "H\n"
+		input = readline(stdin)
+    if input == "H"
         :human
-    elseif input == "C\n"
+    elseif input == "C"
         :computer
     else
         println("Chose 'H' for Human or 'C' for Computer...")
@@ -133,7 +134,7 @@ function main()
         println(board_to_string(board, rows, columns))
         if player_type[player] == :human
             println("Enter your move:")
-            input = readline(STDIN)
+            input = readline(stdin)
             try
                 command = parse_input(input, rows, columns)
                 if command == (0,0)
