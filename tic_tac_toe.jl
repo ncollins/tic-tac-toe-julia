@@ -17,11 +17,11 @@ function move(board, player, position)
     b = copy(board)
     i, j = position
     if b[i,j] != 0
-        error("position already taken")
+        :invalid_move
     else
         b[i,j] = player
+        b
     end
-    b
 end
 
 
@@ -94,12 +94,12 @@ function parse_input(input, rows, columns)
         if (col > 0) && (row > 0)
             return (row, col)
         else
-            error()
+            :invald_input
         end
     elseif input == "END"
-        return (0,0)
+        return :end
     else
-        error()
+        :invalid_input
     end
 end
 
@@ -135,16 +135,19 @@ function main()
         if player_type[player] == :human
             println("Enter your move:")
             input = readline(stdin)
-            try
-                command = parse_input(input, rows, columns)
-                if command == (0,0)
-                    break
+            command = parse_input(input, rows, columns)
+            if command == :end
+                break
+            elseif command == :invalid_input
+                println("Invalid input")
+            else
+                new_board = move(board, player, command)
+                if new_board == :invalid_move
+                    println("Invalid move")
                 else
-                    board = move(board, player, command)
+                    board = new_board
+                    player *= -1
                 end
-                player *= -1
-            catch
-                println("Invalid input/move")
             end
         else
             ai_util, ai_move = minmax(board, player)
