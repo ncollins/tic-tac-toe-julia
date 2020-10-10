@@ -91,15 +91,15 @@ function parse_input(input, rows, columns)
     if length(input) == 2
 		col = findfirst(x -> x == input[1], columns)
         row = findfirst(x -> x == input[2], rows)
-        if (col > 0) && (row > 0)
+        if isdefined(Base, :col) && isdefined(Base, :row) && (col > 0) && (row > 0)
             return (row, col)
         else
-            :invald_input
+            return :invalid_input
         end
     elseif input == "END"
         return :end
     else
-        :invalid_input
+        return :invalid_input
     end
 end
 
